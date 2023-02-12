@@ -153,7 +153,7 @@ function NewFactForm({ setFacts, setShowForm }) {
     setIsUploading(false);
 
     // add the new fact to the UI: add the fact to the state
-    setFacts((facts) => [newFact[0], ...facts]);
+    if (!error) setFacts((facts) => [newFact[0], ...facts]);
 
     // reset the input fields
     setText('');
