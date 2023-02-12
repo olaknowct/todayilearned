@@ -39,21 +39,29 @@ function App() {
   const [showForm, setShowForm] = useState(false);
   const [facts, setFacts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState('all');
 
   // 2nd parameter (dependency array): will ensure that the functions will runs only at the beginning as soon as the app component first renders
   // execute once when the component render
-  useEffect(function () {
-    async function getFacts() {
-      setIsLoading(true);
+  useEffect(
+    function () {
+      async function getFacts() {
+        setIsLoading(true);
 
-      const { data: facts, error } = await supabase.from('facts').select('*').order('votesInteresting', { ascending: true }).limit(1000);
+        let query = supabase.from('facts').select('*');
 
-      if (!error) setFacts(facts);
-      else alert('There was a problem getting data');
-      setIsLoading(false);
-    }
-    getFacts();
-  }, []);
+        if (currentCategory !== 'all') query = query.eq('category', currentCategory);
+
+        const { data: facts, error } = await query.order('votesInteresting', { ascending: true }).limit(1000);
+
+        if (!error) setFacts(facts);
+        else alert('There was a problem getting data');
+        setIsLoading(false);
+      }
+      getFacts();
+    },
+    [currentCategory] // since useEffect run once, we can specify a variables where effect listen to it and trigger the effect function once again.
+  );
 
   return (
     <>
@@ -63,7 +71,7 @@ function App() {
       {showForm ? <NewFactForm setFacts={setFacts} setShowForm={setShowForm} /> : null}
 
       <main className='main'>
-        <CategoryFilter />
+        <CategoryFilter setCurrentCategory={setCurrentCategory} />
         {isLoading ? <Loader /> : <FactList facts={facts} />}
       </main>
     </>
@@ -116,9 +124,10 @@ function NewFactForm({ setFacts, setShowForm }) {
   const [text, setText] = useState('');
   const [source, setSource] = useState('http://example.com');
   const [category, setCategory] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   const textLength = text.length;
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     // Prevent browser reload
     e.preventDefault();
     console.log(text, source, category);
@@ -127,18 +136,24 @@ function NewFactForm({ setFacts, setShowForm }) {
     if (text && isValidHttpUrl(source) && category) console.log('there is valida data');
 
     // Create new fact object
-    const newFact = {
-      id: Math.round(Math.random() * 10000),
-      text,
-      source,
-      category,
-      votesInteresting: 8,
-      votesMindblowing: 3,
-      votesFalse: 1,
-      createdIn: new Date().getFullYear(),
-    };
+    // const newFact = {
+    //   id: Math.round(Math.random() * 10000),
+    //   text,
+    //   source,
+    //   category,
+    //   votesInteresting: 8,
+    //   votesMindblowing: 3,
+    //   votesFalse: 1,
+    //   createdIn: new Date().getFullYear(),
+    // };
+
+    setIsUploading(true);
+    // Upload fact to supabase and receive the new fact object
+    const { data: newFact, error } = await supabase.from('facts').insert([{ text, source, category }]).select();
+    setIsUploading(false);
+
     // add the new fact to the UI: add the fact to the state
-    setFacts((facts) => [newFact, ...facts]);
+    setFacts((facts) => [newFact[0], ...facts]);
 
     // reset the input fields
     setText('');
@@ -151,7 +166,7 @@ function NewFactForm({ setFacts, setShowForm }) {
 
   return (
     <form className='fact-form' onSubmit={handleSubmit}>
-      <input type='text' placeholder='Share a fact with the world...' value={text} onChange={(e) => setText(e.target.value)} />
+      <input type='text' placeholder='Share a fact with the world...' value={text} onChange={(e) => setText(e.target.value)} disabled={isUploading} />
       <span>{200 - textLength}</span>
       <input type='text' placeholder='Trustworthy source...' value={source} onChange={(e) => setSource(e.target.value)} />
       <select value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -162,21 +177,25 @@ function NewFactForm({ setFacts, setShowForm }) {
           </option>
         ))}
       </select>
-      <button className='btn btn-large'>Post</button>
+      <button className='btn btn-large' disabled={isUploading}>
+        Post
+      </button>
     </form>
   );
 }
 
-function CategoryFilter() {
+function CategoryFilter({ setCurrentCategory }) {
   return (
     <aside>
       <ul>
         <li className='category'>
-          <button className='btn btn-all-categories'>All</button>
+          <button className='btn btn-all-categories' onClick={() => setCurrentCategory('all')}>
+            All
+          </button>
         </li>
         {CATEGORIES.map((cat) => (
           <li key={cat.name} className='category'>
-            <button className='btn btn-category' style={{ backgroundColor: cat.color }}>
+            <button className='btn btn-category' style={{ backgroundColor: cat.color }} onClick={() => setCurrentCategory(cat.name)}>
               {cat.name}
             </button>
           </li>
@@ -187,6 +206,9 @@ function CategoryFilter() {
 }
 
 function FactList({ facts }) {
+  if (facts.length === 0) {
+    return <p className='message'>No Facts for this Category yet! create the first one</p>;
+  }
   return (
     <section>
       <ul className='facts-list'>
@@ -209,7 +231,7 @@ function Fact({ fact }) {
         </a>
       </p>
       <span className='tag' style={{ backgroundColor: CATEGORIES.find((cat) => cat.name === fact.category).color }}>
-        technology
+        {fact.category}
       </span>
       <div className='vote-buttons'>
         <button>👍 {fact.votesInteresting}</button>
