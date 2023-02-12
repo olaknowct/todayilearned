@@ -38,14 +38,19 @@ const initialFacts = [
 function App() {
   const [showForm, setShowForm] = useState(false);
   const [facts, setFacts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 2nd parameter (dependency array): will ensure that the functions will runs only at the beginning as soon as the app component first renders
   // execute once when the component render
   useEffect(function () {
     async function getFacts() {
-      const { data: facts, error } = await supabase.from('facts').select('*');
-      console.log(facts);
-      setFacts(facts);
+      setIsLoading(true);
+
+      const { data: facts, error } = await supabase.from('facts').select('*').order('votesInteresting', { ascending: true }).limit(1000);
+
+      if (!error) setFacts(facts);
+      else alert('There was a problem getting data');
+      setIsLoading(false);
     }
     getFacts();
   }, []);
@@ -59,10 +64,14 @@ function App() {
 
       <main className='main'>
         <CategoryFilter />
-        <FactList facts={facts} />
+        {isLoading ? <Loader /> : <FactList facts={facts} />}
       </main>
     </>
   );
+}
+
+function Loader() {
+  return <p className='message'>Loading...</p>;
 }
 
 function Header({ showForm, setShowForm }) {
