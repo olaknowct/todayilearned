@@ -36,16 +36,18 @@ const initialFacts = [
 
 function App() {
   const [showForm, setShowForm] = useState(false);
+  const [facts, setFacts] = useState(initialFacts);
+
   return (
     <>
       {/* HEADER */}
       <Header showForm={showForm} setShowForm={setShowForm} />
 
-      {showForm ? <NewFactForm /> : null}
+      {showForm ? <NewFactForm setFacts={setFacts} setShowForm={setShowForm} /> : null}
 
       <main className='main'>
         <CategoryFilter />
-        <FactList />
+        <FactList facts={facts} />
       </main>
     </>
   );
@@ -78,15 +80,52 @@ const CATEGORIES = [
   { name: 'news', color: '#8b5cf6' },
 ];
 
-function NewFactForm() {
+function isValidHttpUrl(string) {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (e) {
+    return false;
+  }
+
+  return url.protocol === 'http:' || url.protocol === 'https:';
+}
+
+function NewFactForm({ setFacts, setShowForm }) {
   const [text, setText] = useState('');
-  const [source, setSource] = useState('');
+  const [source, setSource] = useState('http://example.com');
   const [category, setCategory] = useState('');
   const textLength = text.length;
 
   function handleSubmit(e) {
+    // Prevent browser reload
     e.preventDefault();
     console.log(text, source, category);
+
+    // Create new fact if data is valid
+    if (text && isValidHttpUrl(source) && category) console.log('there is valida data');
+
+    // Create new fact object
+    const newFact = {
+      id: Math.round(Math.random() * 10000),
+      text,
+      source,
+      category,
+      votesInteresting: 8,
+      votesMindblowing: 3,
+      votesFalse: 1,
+      createdIn: new Date().getFullYear(),
+    };
+    // add the new fact to the UI: add the fact to the state
+    setFacts((facts) => [newFact, ...facts]);
+
+    // reset the input fields
+    setText('');
+    setSource('');
+    setCategory('');
+
+    // close the form
+    setShowForm(false);
   }
 
   return (
@@ -126,8 +165,7 @@ function CategoryFilter() {
   );
 }
 
-function FactList() {
-  const facts = initialFacts;
+function FactList({ facts }) {
   return (
     <section>
       <ul className='facts-list'>
