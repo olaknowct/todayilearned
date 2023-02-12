@@ -34,39 +34,12 @@ const initialFacts = [
   },
 ];
 
-function Counter() {
-  // current state , function to update the state
-  const [count, setCount] = useState(0);
-  return (
-    <div>
-      <span style={{ fontSize: '40px' }}>{count}</span>
-      <button
-        className='btn btn-large'
-        onClick={() => {
-          setCount(23);
-        }}
-      >
-        +1
-      </button>
-    </div>
-  );
-}
-
 function App() {
   const [showForm, setShowForm] = useState(false);
   return (
     <>
       {/* HEADER */}
-      <header className='header'>
-        <div className='logo'>
-          <img src='logo.png' height='68' width='68' alt='Today I Learned Logo' />
-          <h1>Today I Learned</h1>
-        </div>
-
-        <button className='btn btn-large btn-open' onClick={() => setShowForm(!showForm)}>
-          Share a fact
-        </button>
-      </header>
+      <Header showForm={showForm} setShowForm={setShowForm} />
 
       {showForm ? <NewFactForm /> : null}
 
@@ -75,6 +48,22 @@ function App() {
         <FactList />
       </main>
     </>
+  );
+}
+
+function Header({ showForm, setShowForm }) {
+  const appTitle = 'Today I learned';
+  return (
+    <header className='header'>
+      <div className='logo'>
+        <img src='logo.png' height='68' width='68' alt='Today I Learned Logo' />
+        <h1>{appTitle}</h1>
+      </div>
+
+      <button className='btn btn-large btn-open' onClick={() => setShowForm(!showForm)}>
+        {showForm ? 'Close' : 'Share a fact'}
+      </button>
+    </header>
   );
 }
 
