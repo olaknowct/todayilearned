@@ -221,18 +221,40 @@ function FactList({ facts, setFacts }) {
 }
 
 function Fact({ fact, setFacts }) {
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [isUpdatingVI, setIsUpdatingVI] = useState(false);
+  const [isUpdatingMB, setIsUpdatingMB] = useState(false);
+  const [isUpdatingF, setIsUpdatingF] = useState(false);
   const isDisputed = fact.votesInteresting + fact.votesMindblowing < fact.votesFalse;
 
+  // hindi pede yung !isUpdatingVI etc since this one runs firs time only??
+  // function runs 1 time only based what i observe
+  // if we use is updatingVi kahit i setState natin siya from the function hindi siya mag uupdate
+  function setIsUpdating(vote, isUpdating) {
+    switch (vote) {
+      case 'votesInteresting':
+        setIsUpdatingVI(isUpdating);
+        break;
+      case 'votesMindblowing':
+        setIsUpdatingMB(isUpdating);
+        break;
+      case 'votesFalse':
+        setIsUpdatingF(isUpdating);
+        break;
+      default:
+        console.log('Sorry, no category');
+    }
+  }
+
   async function handleVote(columnName) {
-    setIsUpdating(true);
+    setIsUpdating(columnName, true);
 
     const { data: updatedFact, error } = await supabase
       .from('facts')
       .update({ [columnName]: fact[columnName] + 1 })
       .eq('id', fact.id)
       .select();
-    setIsUpdating(false);
+
+    setIsUpdating(columnName, false);
 
     if (!error)
       setFacts((facts) => {
@@ -252,13 +274,13 @@ function Fact({ fact, setFacts }) {
         {fact.category}
       </span>
       <div className='vote-buttons'>
-        <button onClick={() => handleVote('votesInteresting')} disabled={isUpdating}>
+        <button onClick={() => handleVote('votesInteresting')} disabled={isUpdatingVI}>
           👍 {fact.votesInteresting}
         </button>
-        <button onClick={() => handleVote('votesMindblowing')} disabled={isUpdating}>
+        <button onClick={() => handleVote('votesMindblowing')} disabled={isUpdatingMB}>
           🤯 {fact.votesMindblowing}
         </button>
-        <button onClick={() => handleVote('votesFalse')} disabled={isUpdating}>
+        <button onClick={() => handleVote('votesFalse')} disabled={isUpdatingF}>
           ⛔️ {fact.votesFalse}
         </button>
       </div>
