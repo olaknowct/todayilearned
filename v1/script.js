@@ -56,10 +56,8 @@ loadFacts();
 async function loadFacts() {
   const res = await fetch('https://ugxzdkbxclwbuqvbmobw.supabase.co/rest/v1/facts', {
     headers: {
-      apikey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVneHpka2J4Y2x3YnVxdmJtb2J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzYwODM1NzMsImV4cCI6MTk5MTY1OTU3M30.FoqK3lJopqmLeFCYzKjoRNw-GzfvqOYbP8L8vZkzbck',
-      authorization:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVneHpka2J4Y2x3YnVxdmJtb2J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzYwODM1NzMsImV4cCI6MTk5MTY1OTU3M30.FoqK3lJopqmLeFCYzKjoRNw-GzfvqOYbP8L8vZkzbck',
+      apikey: process.env.REACT_APP_SUPABASE_KEY,
+      authorization: REACT_APP_SUPABASE_AUTH,
     },
   });
   const data = await res.json();
@@ -82,7 +80,9 @@ function createFactsList(dataArray) {
         target="_blank"
       >(Source)</a>
     </p>
-    <span class="tag" style="background-color: ${CATEGORIES.find((cat) => cat.name === fact.category).color}">${fact.category}</span>
+    <span class="tag" style="background-color: ${
+      CATEGORIES.find((cat) => cat.name === fact.category).color
+    }">${fact.category}</span>
   </li>`
   );
   const html = htmlArr.join('');
