@@ -52,7 +52,9 @@ function App() {
 
         if (currentCategory !== 'all') query = query.eq('category', currentCategory);
 
-        const { data: facts, error } = await query.order('votesInteresting', { ascending: true }).limit(1000);
+        const { data: facts, error } = await query
+          .order('votesInteresting', { ascending: true })
+          .limit(1000);
 
         if (!error) setFacts(facts);
         else alert('There was a problem getting data');
@@ -149,7 +151,10 @@ function NewFactForm({ setFacts, setShowForm }) {
 
     setIsUploading(true);
     // Upload fact to supabase and receive the new fact object
-    const { data: newFact, error } = await supabase.from('facts').insert([{ text, source, category }]).select();
+    const { data: newFact, error } = await supabase
+      .from('facts')
+      .insert([{ text, source, category }])
+      .select();
     setIsUploading(false);
 
     // add the new fact to the UI: add the fact to the state
@@ -166,9 +171,20 @@ function NewFactForm({ setFacts, setShowForm }) {
 
   return (
     <form className='fact-form' onSubmit={handleSubmit}>
-      <input type='text' placeholder='Share a fact with the world...' value={text} onChange={(e) => setText(e.target.value)} disabled={isUploading} />
+      <input
+        type='text'
+        placeholder='Share a fact with the world...'
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        disabled={isUploading}
+      />
       <span>{200 - textLength}</span>
-      <input type='text' placeholder='Trustworthy source...' value={source} onChange={(e) => setSource(e.target.value)} />
+      <input
+        type='text'
+        placeholder='Trustworthy source...'
+        value={source}
+        onChange={(e) => setSource(e.target.value)}
+      />
       <select value={category} onChange={(e) => setCategory(e.target.value)}>
         <option value=''>Choose category:</option>
         {CATEGORIES.map((cat) => (
@@ -195,7 +211,11 @@ function CategoryFilter({ setCurrentCategory }) {
         </li>
         {CATEGORIES.map((cat) => (
           <li key={cat.name} className='category'>
-            <button className='btn btn-category' style={{ backgroundColor: cat.color }} onClick={() => setCurrentCategory(cat.name)}>
+            <button
+              className='btn btn-category'
+              style={{ backgroundColor: cat.color }}
+              onClick={() => setCurrentCategory(cat.name)}
+            >
               {cat.name}
             </button>
           </li>
@@ -206,7 +226,8 @@ function CategoryFilter({ setCurrentCategory }) {
 }
 
 function FactList({ facts, setFacts }) {
-  if (facts.length === 0) return <p className='message'>No facts for this category yet! Create the first one ✌️</p>;
+  if (facts.length === 0)
+    return <p className='message'>No facts for this category yet! Create the first one ✌️</p>;
 
   return (
     <section>
@@ -270,7 +291,10 @@ function Fact({ fact, setFacts }) {
           (Source)
         </a>
       </p>
-      <span className='tag' style={{ backgroundColor: CATEGORIES.find((cat) => cat.name === fact.category).color }}>
+      <span
+        className='tag'
+        style={{ backgroundColor: CATEGORIES.find((cat) => cat.name === fact.category).color }}
+      >
         {fact.category}
       </span>
       <div className='vote-buttons'>
