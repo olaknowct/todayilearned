@@ -1,11 +1,22 @@
+import { useDispatch } from 'react-redux';
 import { CATEGORIES } from '../../data/categories';
+import { setCurrentCategory } from '../../store/facts/facts.reducer';
 
-const CategoryFilter = ({ setCurrentCategory }) => {
+const CategoryFilter = () => {
+  const dispatch = useDispatch();
+
+  const setCurrentCategoryHandler = (categoryName) => {
+    dispatch(setCurrentCategory(categoryName));
+  };
+
   return (
     <aside>
       <ul>
         <li className='category'>
-          <button className='btn btn-all-categories' onClick={() => setCurrentCategory('all')}>
+          <button
+            className='btn btn-all-categories'
+            onClick={setCurrentCategoryHandler.bind(null, 'all')}
+          >
             All
           </button>
         </li>
@@ -14,7 +25,7 @@ const CategoryFilter = ({ setCurrentCategory }) => {
             <button
               className='btn btn-category'
               style={{ backgroundColor: cat.color }}
-              onClick={() => setCurrentCategory(cat.name)}
+              onClick={setCurrentCategoryHandler.bind(null, cat.name)}
             >
               {cat.name}
             </button>
