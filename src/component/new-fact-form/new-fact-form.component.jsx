@@ -2,59 +2,64 @@ import { useState } from 'react';
 import { isValidHttpUrl } from '../../helper/helper';
 import supabase from '../../supabase';
 import { CATEGORIES } from '../../data/categories';
+import { useDispatch, useSelector } from 'react-redux';
+import { setShowForm, createFactStart } from '../../store/facts/facts.reducer';
+import { selectFactsisUploading } from '../../store/facts/facts.selector';
 
-const NewFactForm = ({ setFacts, setShowForm }) => {
-  const [text, setText] = useState('');
-  const [source, setSource] = useState('');
-  const [category, setCategory] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
-  const textLength = text.length;
+const defaultFormFields = {
+  fact: '',
+  source: '',
+  category: '',
+};
 
-  async function handleSubmit(e) {
-    // Prevent browser reload
+const NewFactForm = () => {
+  const dispatch = useDispatch();
+  const [formFields, setFormFields] = useState(defaultFormFields);
+  const { fact, source, category } = formFields;
+  const factLength = fact.length;
+
+  const isUploading = useSelector(selectFactsisUploading);
+
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormFields({ ...formFields, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(text, source, category);
 
-    // Create new fact if data is valid
-    if (text && isValidHttpUrl(source) && category) console.log('there is valida data');
+    if (fact && isValidHttpUrl(source) && category) console.log('there is valida data');
 
-    setIsUploading(true);
-    // Upload fact to supabase and receive the new fact object
-    const { data: newFact, error } = await supabase
-      .from('facts')
-      .insert([{ text, source, category }])
-      .select();
-    setIsUploading(false);
+    dispatch(createFactStart(formFields));
 
-    // add the new fact to the UI: add the fact to the state
-    if (!error) setFacts((facts) => [newFact[0], ...facts]);
-
-    // reset the input fields
-    setText('');
-    setSource('');
-    setCategory('');
-
+    resetFormFields();
     // close the form
-    setShowForm(false);
-  }
+    dispatch(setShowForm(false));
+  };
 
   return (
     <form className='fact-form' onSubmit={handleSubmit}>
       <input
         type='text'
         placeholder='Share a fact with the world...'
-        value={text}
-        onChange={(e) => setText(e.target.value)}
+        value={fact}
+        onChange={handleChange}
         disabled={isUploading}
+        name='fact'
       />
-      <span>{200 - textLength}</span>
+      <span>{200 - factLength}</span>
       <input
         type='text'
         placeholder='Trustworthy source...'
         value={source}
-        onChange={(e) => setSource(e.target.value)}
+        name='source'
+        onChange={handleChange}
       />
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
+      <select value={category} name='category' onChange={handleChange}>
         <option value=''>Choose category:</option>
         {CATEGORIES.map((cat) => (
           <option key={cat.name} value={cat.name}>
