@@ -1,20 +1,28 @@
 # Today We learn!
+
 Link : https://todaywe-learn.netlify.app/
 
 ### About
-- The project is a React Project that consolidate facts idea. 
+
+- The project is a React Project that consolidate facts idea.
 
 ### Feature Developed
+
 - Single Page Application
 - Create Facts
-- Category Filter 
+- Category Filter
 - Voting (Interesting, false information, Mind Blowing)
 
 ### Frontend Technology/Libraries
+
 - React
 - React Hooks (useEffect, useState)
 - Function Component
-
+- Reducer
+- Redux Toolkit
+- Redux Logger
+- Redux Saga
 
 ### API/Backend
+
 - SupaBase
