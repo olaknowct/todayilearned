@@ -14,6 +14,7 @@ const defaultFormFields = {
 const NewFactForm = () => {
   const dispatch = useDispatch();
   const [formFields, setFormFields] = useState(defaultFormFields);
+  const [error, setError] = useState('');
   const { fact, source, category } = formFields;
   const factLength = fact.length;
 
@@ -31,7 +32,9 @@ const NewFactForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (fact && isValidHttpUrl(source) && category) console.log('there is valida data');
+    if (!(fact && isValidHttpUrl(source) && category)) {
+      return setError('Invalid data. please try again');
+    }
 
     dispatch(createFactStart(formFields));
 
@@ -42,14 +45,17 @@ const NewFactForm = () => {
 
   return (
     <form className='fact-form' onSubmit={handleSubmit}>
-      <input
-        type='text'
-        placeholder='Share a fact with the world...'
-        value={fact}
-        onChange={handleChange}
-        disabled={isUploading}
-        name='fact'
-      />
+      <div>
+        <input
+          type='text'
+          placeholder='Share a fact with the world...'
+          value={fact}
+          onChange={handleChange}
+          disabled={isUploading}
+          name='fact'
+        />
+        <span>{error}</span>
+      </div>
       <span>{200 - factLength}</span>
       <input
         type='text'
