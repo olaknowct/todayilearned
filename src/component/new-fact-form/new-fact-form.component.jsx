@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { isValidHttpUrl } from '../../helper/helper';
-import supabase from '../../supabase';
 import { CATEGORIES } from '../../data/categories';
 import { useDispatch, useSelector } from 'react-redux';
 import { setShowForm, createFactStart } from '../../store/facts/facts.reducer';
