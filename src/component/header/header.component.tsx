@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { selectShowForm } from '../../store/facts/facts.selector';
 import { setShowForm } from '../../store/facts/facts.reducer';
+import React from 'react';
 
 const Header = () => {
   const dispatch = useDispatch();

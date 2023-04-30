@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import Fact from '../fact/fact.component';
 import { selectFactsCount, selectFactList } from '../../store/facts/facts.selector';
+import React from 'react';
 
 const FactList = () => {
   const facts = useSelector(selectFactList);
