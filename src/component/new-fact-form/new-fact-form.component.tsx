@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { isValidHttpUrl } from '../../helper/helper';
 import { CATEGORIES } from '../../data/categories';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,13 +24,13 @@ const NewFactForm = () => {
     setFormFields(defaultFormFields);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = event.target;
     setFormFields({ ...formFields, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
     if (!(fact && isValidHttpUrl(source) && category)) {
       return setError('Invalid data. please try again');
