@@ -1,14 +1,22 @@
 import { CATEGORIES } from '../../data/categories';
 import { useDispatch } from 'react-redux';
 import { updateFactStart } from '../../store/facts/facts.reducer';
+import React from 'react';
+
+export type handleVoteType = {
+  factType: 'votesInteresting' | 'votesMindBlowing' | 'votesFalse';
+  factId: number;
+  totalVote: number;
+};
 
 const Fact = ({ fact }) => {
   const dispatch = useDispatch();
   const isDisputed = fact.votesInteresting + fact.votesMindblowing < fact.votesFalse;
 
-  const handleVote = (factType, factId) => {
-    const totalVote = fact[factType] + 1;
-    dispatch(updateFactStart({ factType, factId, totalVote }));
+  const handleVote = (factType: handleVoteType['factType'], factId: handleVoteType['factId']) => {
+    const totalVote: handleVoteType['totalVote'] = fact[factType] + 1;
+    const updateObject = { factType, factId, totalVote };
+    dispatch(updateFactStart(updateObject));
   };
 
   return (
@@ -23,7 +31,7 @@ const Fact = ({ fact }) => {
         </p>
         <span
           className='tag'
-          style={{ backgroundColor: CATEGORIES.find((cat) => cat.name === fact.category).color }}
+          style={{ backgroundColor: CATEGORIES.find((cat) => cat.name === fact.category)?.color }}
         >
           {fact.category}
         </span>

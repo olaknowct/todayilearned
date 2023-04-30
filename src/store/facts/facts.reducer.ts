@@ -1,4 +1,4 @@
-import { createSlice, createAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 export const FACTS_INITIAL_STATE = {
   factList: [],
@@ -55,6 +55,7 @@ export const factsSlice = createSlice({
       state.error = action.payload;
       state.isUploading = false;
     },
+    updateFactStart(state, action) {},
   },
 });
 
@@ -69,8 +70,9 @@ export const {
   createFactStart,
   createFactSuccess,
   createFactFailed,
+  updateFactStart,
 } = factsSlice.actions;
 
 export const factsReducer = factsSlice.reducer;
 
-export const updateFactStart = createAction('facts/updateFactStart');
+// export const updateFactStart = createAction('facts/updateFactStart');
