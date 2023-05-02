@@ -1,7 +1,7 @@
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { CATEGORIES } from '../../data/categories';
 import { setCurrentCategory } from '../../store/facts/facts.reducer';
-import React from 'react';
 
 const CategoryFilter = () => {
   const dispatch = useDispatch();

@@ -5,6 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setShowForm, createFactStart } from '../../store/facts/facts.reducer';
 import { selectFactsisUploading } from '../../store/facts/facts.selector';
 
+export type formFieldType = {
+  fact: string;
+  source: string;
+  category: string;
+};
+
 const defaultFormFields = {
   fact: '',
   source: '',

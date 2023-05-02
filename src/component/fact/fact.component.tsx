@@ -1,7 +1,8 @@
+import React from 'react';
 import { CATEGORIES } from '../../data/categories';
 import { useDispatch } from 'react-redux';
 import { updateFactStart } from '../../store/facts/facts.reducer';
-import React from 'react';
+import { FactType } from '../../store/facts/facts.reducer';
 
 export type handleVoteType = {
   factType: 'votesInteresting' | 'votesMindBlowing' | 'votesFalse';
@@ -9,9 +10,9 @@ export type handleVoteType = {
   totalVote: number;
 };
 
-const Fact = ({ fact }) => {
+const Fact = ({ fact }: { fact: FactType }) => {
   const dispatch = useDispatch();
-  const isDisputed = fact.votesInteresting + fact.votesMindblowing < fact.votesFalse;
+  const isDisputed = fact.votesInteresting + fact.votesMindBlowing < fact.votesFalse;
 
   const handleVote = (factType: handleVoteType['factType'], factId: handleVoteType['factId']) => {
     const totalVote: handleVoteType['totalVote'] = fact[factType] + 1;
@@ -39,8 +40,8 @@ const Fact = ({ fact }) => {
           <button onClick={handleVote.bind(null, 'votesInteresting', fact.id)}>
             👍 {fact.votesInteresting}
           </button>
-          <button onClick={handleVote.bind(null, 'votesMindblowing', fact.id)}>
-            🤯 {fact.votesMindblowing}
+          <button onClick={handleVote.bind(null, 'votesMindBlowing', fact.id)}>
+            🤯 {fact.votesMindBlowing}
           </button>
           <button onClick={handleVote.bind(null, 'votesFalse', fact.id)}>
             ⛔️ {fact.votesFalse}

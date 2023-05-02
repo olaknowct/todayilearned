@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux';
 import Fact from '../fact/fact.component';
 import { selectFactsCount, selectFactList } from '../../store/facts/facts.selector';
 import React from 'react';
+import { FactType } from '../../store/facts/facts.reducer';
 
 const FactList = () => {
   const facts = useSelector(selectFactList);
@@ -13,7 +14,7 @@ const FactList = () => {
   return (
     <section>
       <ul className='facts-list'>
-        {facts?.map((fact) => (
+        {facts?.map((fact: FactType) => (
           <Fact key={fact.id} fact={fact} />
         ))}
       </ul>
