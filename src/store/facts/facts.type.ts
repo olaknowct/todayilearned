@@ -1,0 +1,3 @@
+export enum USER_ACTION_TYPES {
+  CREATE_FACT_START = 'facts/CREATE_FACT_START',
+}

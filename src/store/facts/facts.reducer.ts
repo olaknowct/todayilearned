@@ -1,6 +1,28 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { handleVoteType } from '../../component/fact/fact.component';
+import { formFieldType } from '../../component/new-fact-form/new-fact-form.component';
 
-export const FACTS_INITIAL_STATE = {
+export type FactType = {
+  id: number;
+  created_at: Date;
+  text: string;
+  source: string;
+  category: string;
+  votesInteresting: number;
+  votesMindBlowing: number;
+  votesFalse: number;
+};
+
+export interface FactsState {
+  factList: FactType[];
+  isLoading: boolean;
+  showForm: boolean;
+  error: string | null;
+  isUploading: boolean;
+  currentCategory: string;
+}
+
+export const FACTS_INITIAL_STATE: FactsState = {
   factList: [],
   isLoading: false,
   showForm: false,
@@ -13,49 +35,49 @@ export const factsSlice = createSlice({
   name: 'facts',
   initialState: FACTS_INITIAL_STATE,
   reducers: {
-    fetchFactsStart(state, action) {
+    fetchFactsStart(state) {
       state.isLoading = true;
     },
 
-    fetchFactsSuccess(state, action) {
+    fetchFactsSuccess(state, action: PayloadAction<FactType[]>) {
       state.factList = action.payload;
       state.isLoading = false;
     },
 
-    fetchFactsFailed(state, action) {
+    fetchFactsFailed(state, action: PayloadAction<string>) {
       state.isLoading = false;
       state.error = action.payload;
     },
 
-    updateFactSuccess(state, action) {
+    updateFactSuccess(state, action: PayloadAction<FactType[]>) {
       state.factList = action.payload;
     },
 
-    updateFactFailed(state, action) {
+    updateFactFailed(state, action: PayloadAction<string>) {
       state.error = action.payload;
     },
 
-    setShowForm(state, action) {
+    setShowForm(state, action: PayloadAction<boolean>) {
       state.showForm = action.payload;
     },
 
-    setCurrentCategory(state, action) {
+    setCurrentCategory(state, action: PayloadAction<string>) {
       state.currentCategory = action.payload;
     },
 
-    createFactStart(state, action) {
+    createFactStart(state, action: PayloadAction<formFieldType>) {
       state.isUploading = true;
     },
 
-    createFactSuccess(state, action) {
+    createFactSuccess(state) {
       state.isUploading = false;
     },
 
-    createFactFailed(state, action) {
+    createFactFailed(state, action: PayloadAction<string>) {
       state.error = action.payload;
       state.isUploading = false;
     },
-    updateFactStart(state, action) {},
+    updateFactStart(state, action: PayloadAction<handleVoteType>) {},
   },
 });
 

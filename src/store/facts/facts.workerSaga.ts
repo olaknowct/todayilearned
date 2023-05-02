@@ -6,13 +6,18 @@ import {
   updateFactFailed,
   createFactSuccess,
   createFactFailed,
+  FactType,
 } from './facts.reducer';
 import supabase from '../../supabase';
 import { selectCurrentCategory, selectFactList } from './facts.selector';
+import { handleVoteType } from '../../component/fact/fact.component';
+import { formFieldType } from '../../component/new-fact-form/new-fact-form.component';
+import { PayloadAction } from '@reduxjs/toolkit';
+
 // Fetch Users Saga
 export function* fetchFactsSaga() {
   try {
-    const currentCategory = yield select(selectCurrentCategory);
+    const currentCategory: string = yield select(selectCurrentCategory);
 
     let query = supabase.from('facts').select('*');
 
@@ -20,43 +25,45 @@ export function* fetchFactsSaga() {
 
     query = query.order('votesInteresting', { ascending: true });
 
-    const { data: facts, error } = yield call([query, query.limit], '100');
+    const { data: facts, error }: { data: FactType[]; error: Error | null } = yield call(
+      [query, query.limit],
+      100
+    );
 
     if (error) throw new Error(error.message);
 
     yield put(fetchFactsSuccess(facts));
   } catch (error) {
-    yield put(fetchFactsFailed(error));
+    yield put(fetchFactsFailed(error as string));
   }
 }
 
-export function* updateFactSaga(action) {
+export function* updateFactSaga({ factType, factId, totalVote }: handleVoteType) {
   try {
-    const { factType, factId, totalVote } = action.payload;
-
     let query = supabase
       .from('facts')
       .update({ [factType]: totalVote })
       .eq('id', factId);
 
-    const { data: updatedFact, error } = yield call([query, query.select]);
+    const { data: updatedFact, error }: { data: FactType[]; error: Error | null } = yield call([
+      query,
+      query.select,
+    ]);
 
     if (error) throw new Error(error.message);
 
-    const facts = yield select(selectFactList);
+    const facts: FactType[] = yield select(selectFactList);
 
     const updatedFacts = facts.map((fact) => (fact.id === factId ? updatedFact[0] : fact));
 
     yield put(updateFactSuccess(updatedFacts));
   } catch (error) {
-    yield put(updateFactFailed(error));
+    yield put(updateFactFailed(error as string));
   }
 }
 
-export function* createFactSaga(action) {
+export function* createFactSaga({ fact, source, category }: formFieldType) {
   try {
-    const { fact, source, category } = action.payload;
-
     let query = supabase.from('facts').insert([{ text: fact, source, category }]);
 
     // Upload fact to supabase and receive the new fact object
@@ -64,7 +71,7 @@ export function* createFactSaga(action) {
 
     if (error) throw new Error(error.message);
 
-    const facts = yield select(selectFactList);
+    const facts: FactType[] = yield select(selectFactList);
 
     // add the new fact to the UI: add the fact to the state
     const updatedFacts = [newFact[0], ...facts];
@@ -72,6 +79,6 @@ export function* createFactSaga(action) {
     yield put(updateFactSuccess(updatedFacts));
     yield put(createFactSuccess());
   } catch (error) {
-    yield put(createFactFailed(error));
+    yield put(createFactFailed(error as string));
   }
 }
