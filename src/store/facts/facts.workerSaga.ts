@@ -38,7 +38,11 @@ export function* fetchFactsSaga() {
   }
 }
 
-export function* updateFactSaga({ factType, factId, totalVote }: handleVoteType) {
+export function* updateFactSaga({
+  payload: { factType, factId, totalVote },
+}: {
+  payload: handleVoteType;
+}) {
   try {
     let query = supabase
       .from('facts')
@@ -62,7 +66,11 @@ export function* updateFactSaga({ factType, factId, totalVote }: handleVoteType)
   }
 }
 
-export function* createFactSaga({ fact, source, category }: formFieldType) {
+export function* createFactSaga({
+  payload: { fact, source, category },
+}: {
+  payload: formFieldType;
+}) {
   try {
     let query = supabase.from('facts').insert([{ text: fact, source, category }]);
 
