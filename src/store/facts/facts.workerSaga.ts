@@ -12,7 +12,6 @@ import supabase from '../../supabase';
 import { selectCurrentCategory, selectFactList } from './facts.selector';
 import { handleVoteType } from '../../component/fact/fact.component';
 import { formFieldType } from '../../component/new-fact-form/new-fact-form.component';
-import { PayloadAction } from '@reduxjs/toolkit';
 
 // Fetch Users Saga
 export function* fetchFactsSaga() {
