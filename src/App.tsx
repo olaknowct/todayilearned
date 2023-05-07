@@ -21,7 +21,7 @@ function App() {
 
   useEffect(() => {
     dispatch(fetchFactsStart());
-  }, [currentCategory]);
+  }, [currentCategory, dispatch]);
 
   return (
     <>
